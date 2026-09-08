@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ConfIA · Automação com IA para pequenos negócios</title>
+<style>
+  :root {
+    --ink:     #111210;
+    --muted:   #6b6b67;
+    --wire:    #1a4a2e;
+    --wire-lt: #e8f3ec;
+    --wire-md: #b8d9c2;
+    --bg:      #f7f6f3;
+    --white:   #ffffff;
+    --border:  #dddbd6;
+    --accent:  #2d6a47;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    background: var(--bg);
+    color: var(--ink);
+    font-size: 17px;
+    line-height: 1.65;
+  }
+
+  /* ── Layout ── */
+  .wrap { max-width: 720px; margin: 0 auto; padding: 0 24px; }
+  .wrap-wide { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+
+  /* ── Nav ── */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 0;
+  }
+  nav .inner {
+    max-width: 960px; margin: 0 auto; padding: 0 24px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .logo {
+    font-size: 18px; font-weight: normal; letter-spacing: 0.02em;
+    color: var(--ink); text-decoration: none;
+  }
+  .logo span { color: var(--accent); font-style: italic; }
+  .nav-links { display: flex; gap: 28px; align-items: center; }
+  .nav-links a {
+    font-family: system-ui, sans-serif;
+    font-size: 13px; color: var(--muted);
+    text-decoration: none; letter-spacing: 0.01em;
+  }
+  .nav-links a:hover { color: var(--ink); }
+  .lang-toggle {
+    font-family: system-ui, sans-serif;
+    font-size: 12px; padding: 5px 12px;
+    border: 1px solid var(--border); background: none;
+    color: var(--muted); cursor: pointer; letter-spacing: 0.04em;
+  }
+  .lang-toggle:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* ── Hero ── */
+  .hero { padding: 80px 0 72px; }
+  .hero-label {
+    font-family: system-ui, sans-serif;
+    font-size: 12px; letter-spacing: 0.12em;
+    color: var(--accent); margin-bottom: 20px;
+    display: block;
+  }
+  h1 {
+    font-size: clamp(36px, 6vw, 58px);
+    line-height: 1.12; font-weight: normal;
+    letter-spacing: -0.02em;
+    margin-bottom: 28px;
+    max-width: 640px;
+  }
+  h1 em { font-style: normal; color: var(--accent); }
+  .hero-sub {
+    font-family: system-ui, sans-serif;
+    font-size: 16px; color: var(--muted);
+    max-width: 520px; line-height: 1.6;
+    margin-bottom: 36px;
+  }
+  .cta-row { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+  .btn-primary {
+    background: var(--accent); color: var(--white);
+    font-family: system-ui, sans-serif; font-size: 14px;
+    padding: 13px 28px; border: none; cursor: pointer;
+    text-decoration: none; display: inline-block;
+    letter-spacing: 0.01em;
+    transition: background 0.15s;
+  }
+  .btn-primary:hover { background: var(--wire); }
+  .cta-note {
+    font-family: system-ui, sans-serif;
+    font-size: 13px; color: var(--muted);
+  }
+
+  /* ── Divider ── */
+  .rule { border: none; border-top: 1px solid var(--border); margin: 0; }
+
+  /* ── Calculator ── */
+  .calc-section { padding: 72px 0; }
+  .section-label {
+    font-family: system-ui, sans-serif;
+    font-size: 12px; letter-spacing: 0.1em;
+    color: var(--muted); margin-bottom: 14px;
+    display: block;
+  }
+  h2 {
+    font-size: clamp(24px, 4vw, 34px);
+    font-weight: normal; letter-spacing: -0.01em;
+    margin-bottom: 10px; line-height: 1.2;
+  }
+  .calc-intro {
+    font-family: system-ui, sans-serif;
+    font-size: 15px; color: var(--muted);
+    margin-bottom: 40px; max-width: 540px;
+  }
+  .calc-box {
+    background: var(--white);
+    border: 1px solid var(--border);
+    padding: 40px;
+  }
+  .calc-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 32px; }
+  .calc-field label {
+    font-family: system-ui, sans-serif;
+    font-size: 12px; color: var(--muted);
+    letter-spacing: 0.06em; display: block; margin-bottom: 8px;
+  }
+  .calc-field input[type=range] {
+    width: 100%; accent-color: var(--accent);
+    margin-bottom: 4px;
+  }
+  .calc-field .val {
+    font-size: 22px; font-weight: normal;
+    color: var(--ink); letter-spacing: -0.01em;
+  }
+  .calc-result {
+    margin-top: 36px;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+  }
+  .calc-result .metric .num {
+    font-size: 36px; letter-spacing: -0.03em;
+    color: var(--accent); display: block;
+    line-height: 1;
+  }
+  .calc-result .metric .desc {
+    font-family: system-ui, sans-serif;
+    font-size: 13px; color: var(--muted);
+    margin-top: 6px; display: block;
+  }
+  .calc-footnote {
+    font-family: system-ui, sans-serif;
+    font-size: 12px; color: var(--muted);
+    margin-top: 20px; line-height: 1.5;
+  }
+
+  /* ── Services ── */
+  .services-section { padding: 72px 0; }
+  .services-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 2px; margin-top: 40px;
+    border: 1px solid var(--border);
+  }
+  .service-card {
+    background: var(--white); padding: 36px;
+    border: 1px solid var(--border);
+  }
+  .service-card:nth-child(2n) { border-left: none; }
+  .service-card:nth-child(n+3) { border-top: none; }
+  .service-icon {
+    width: 32px; height: 2px; background: var(--accent);
+    margin-bottom: 20px;
+  }
+  .service-card h3 {
+    font-size: 18px; font-weight: normal;
+    letter-spacing: -0.01em; margin-bottom: 12px;
+  }
+  .service-card p {
+    font-family: system-ui, sans-serif;
+    font-size: 14px; color: var(--muted); line-height: 1.6;
+    margin-bottom: 16px;
+  }
+  .service-card .examples {
+    font-family: system-ui, sans-serif;
+    font-size: 13px; color: var(--accent);
+    line-height: 1.7;
+  }
+
+  /* ── How it works ── */
+  .how-section { padding: 72px 0; }
+  .steps { margin-top: 40px; }
+  .step {
+    display: grid; grid-template-columns: 40px 1fr;
+    gap: 24px; padding: 28px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .step:first-child { border-top: 1px solid var(--border); }
+  .step-num {
+    font-family: system-ui, sans-serif;
+    font-size: 12px; color: var(--muted);
+    letter-spacing: 0.06em; padding-top: 3px;
+  }
+  .step-content h3 {
+    font-size: 18px; font-weight: normal;
+    margin-bottom: 8px; letter-spacing: -0.01em;
+  }
+  .step-content p {
+    font-family: system-ui, sans-serif;
+    font-size: 15px; color: var(--muted); line-height: 1.6;
+  }
+
+  /* ── Pricing ── */
+  .pricing-section { padding: 72px 0; }
+  .pricing-intro {
+    font-family: system-ui, sans-serif;
+    font-size: 15px; color: var(--muted);
+    max-width: 540px; margin-bottom: 40px;
+  }
+  .pricing-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 2px; border: 1px solid var(--border);
+  }
+  .pricing-card {
+    background: var(--white); padding: 36px;
+    border: 1px solid var(--border);
+  }
+  .pricing-card:nth-child(n+2) { border-left: none; }
+  .pricing-card.featured { background: var(--wire-lt); }
+  .pricing-tag {
+    font-family: system-ui, sans-serif;
+    font-size: 11px; letter-spacing: 0.1em;
+    color: var(--accent); display: block; margin-bottom: 16px;
+  }
+  .pricing-card h3 {
+    font-size: 20px; font-weight: normal;
+    letter-spacing: -0.01em; margin-bottom: 8px;
+  }
+  .pricing-card .tagline {
+    font-family: system-ui, sans-serif;
+    font-size: 13px; color: var(--muted);
+    margin-bottom: 24px; display: block; line-height: 1.5;
+  }
+  .price-line {
+    font-size: 28px; letter-spacing: -0.02em;
+    color: var(--ink); display: block; margin-bottom: 4px;
+  }
+  .price-sub {
+    font-family: system-ui, sans-serif;
+    font-size: 12px; color: var(--muted); margin-bottom: 28px;
+    display: block;
+  }
+  .pricing-list {
+    font-family: system-ui, sans-serif;
+    font-size: 13px; color: var(--muted);
+    list-style: none; line-height: 1.9;
+  }
+  .pricing-list li::before {
+    content: '–'; margin-right: 8px; color: var(--accent);
+  }
+  .pricing-note {
+    font-family: system-ui, sans-serif;
+    font-size: 12px; color: var(--muted);
+    margin-top: 24px; line-height: 1.6;
+  }
+
+  /* ── About ── */
+  .about-section { padding: 72px 0; }
+  .about-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 64px; margin-top: 40px;
+  }
+  .about-text p {
+    font-family: system-ui, sans-serif;
+    font-size: 15px; color: var(--muted);
+    line-height: 1.7; margin-bottom: 16px;
+  }
+  .about-text p strong { color: var(--ink); font-weight: 600; }
+  .tools-label {
+    font-family: system-ui, sans-serif;
+    font-size: 12px; color: var(--muted);
+    letter-spacing: 0.08em; margin-bottom: 12px;
+    display: block;
+  }
+  .tools-list {
+    font-family: system-ui, sans-serif;
+    font-size: 13px; color: var(--muted);
+    line-height: 2;
+  }
+
+  /* ── CTA Footer ── */
+  .cta-section {
+    padding: 80px 0; border-top: 1px solid var(--border);
+  }
+  .cta-section h2 {
+    font-size: clamp(28px, 5vw, 44px);
+    letter-spacing: -0.02em; max-width: 560px;
+    margin-bottom: 16px;
+  }
+  .cta-section p {
+    font-family: system-ui, sans-serif;
+    font-size: 15px; color: var(--muted);
+    margin-bottom: 32px; max-width: 480px;
+  }
+
+  /* ── Footer ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 28px 0;
+  }
+  footer .inner {
+    max-width: 960px; margin: 0 auto; padding: 0 24px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  footer .brand {
+    font-size: 15px; color: var(--muted);
+  }
+  footer .brand span { color: var(--accent); font-style: italic; }
+  footer .links {
+    font-family: system-ui, sans-serif;
+    font-size: 12px; color: var(--muted);
+    display: flex; gap: 20px;
+  }
+  footer .links a { color: var(--muted); text-decoration: none; }
+  footer .links a:hover { color: var(--ink); }
+
+  /* ── Language toggle ── */
+  .pt-text { display: block; }
+  .en-text { display: none; }
+  body.en .pt-text { display: none; }
+  body.en .en-text { display: block; }
+
+  /* ── Responsive ── */
+  @media (max-width: 640px) {
+    .calc-grid { grid-template-columns: 1fr; gap: 20px; }
+    .calc-result { grid-template-columns: 1fr; gap: 16px; }
+    .services-grid { grid-template-columns: 1fr; }
+    .service-card:nth-child(2n) { border-left: 1px solid var(--border); }
+    .service-card:nth-child(n+3) { border-top: none; }
+    .pricing-grid { grid-template-columns: 1fr; }
+    .pricing-card:nth-child(n+2) { border-left: 1px solid var(--border); border-top: none; }
+    .about-grid { grid-template-columns: 1fr; gap: 36px; }
+    .nav-links { gap: 16px; }
+    .calc-box { padding: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="inner">
+    <a href="#" class="logo">conf<span>IA</span></a>
+    <div class="nav-links">
+      <a href="#servicos"><span class="pt-text">Serviços</span><span class="en-text">Services</span></a>
+      <a href="#como"><span class="pt-text">Como funciona</span><span class="en-text">How it works</span></a>
+      <a href="#precos"><span class="pt-text">Preços</span><span class="en-text">Pricing</span></a>
+      <a href="#sobre"><span class="pt-text">Sobre</span><span class="en-text">About</span></a>
+      <button class="lang-toggle" onclick="toggleLang()">EN / PT</button>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="wrap">
+    <span class="hero-label pt-text">Automação com IA · Portugal</span>
+    <span class="hero-label en-text">AI Automation · Portugal</span>
+
+    <h1>
+      <span class="pt-text">A IA em quem<br>pode <em>confiar</em>.</span>
+      <span class="en-text">The AI you can<br><em>trust</em>.</span>
+    </h1>
+
+    <p class="hero-sub pt-text">
+      Elimino o trabalho repetitivo das pequenas empresas com automações feitas à medida — para que a sua equipa se foque no que realmente importa.
+    </p>
+    <p class="hero-sub en-text">
+      I eliminate repetitive work from small businesses with bespoke automations — so your team can focus on what actually matters.
+    </p>
+
+    <div class="cta-row">
+      <a href="https://calendly.com" class="btn-primary">
+        <span class="pt-text">Marcar 30 minutos gratuitos</span>
+        <span class="en-text">Book a free 30-minute call</span>
+      </a>
+      <span class="cta-note pt-text">Sem compromisso.</span>
+      <span class="cta-note en-text">No commitment.</span>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- CALCULATOR -->
+<section class="calc-section">
+  <div class="wrap-wide">
+    <span class="section-label pt-text">O custo do trabalho manual</span>
+    <span class="section-label en-text">The cost of manual work</span>
+
+    <h2>
+      <span class="pt-text">Quanto tempo está a perder por semana?</span>
+      <span class="en-text">How much time are you losing each week?</span>
+    </h2>
+    <p class="calc-intro pt-text">Ajuste os valores abaixo. Sem formulário, sem deixar o seu email.</p>
+    <p class="calc-intro en-text">Adjust the values below. No form, no email required.</p>
+
+    <div class="calc-box">
+      <div class="calc-grid">
+        <div class="calc-field">
+          <label class="pt-text">PESSOAS AFECTADAS</label>
+          <label class="en-text">PEOPLE AFFECTED</label>
+          <input type="range" min="1" max="10" value="3" id="people" oninput="calcUpdate()">
+          <span class="val" id="pVal">3</span>
+        </div>
+        <div class="calc-field">
+          <label class="pt-text">HORAS PERDIDAS / SEMANA / PESSOA</label>
+          <label class="en-text">HOURS LOST / WEEK / PERSON</label>
+          <input type="range" min="1" max="20" value="4" id="hours" oninput="calcUpdate()">
+          <span class="val" id="hVal">4</span>
+        </div>
+        <div class="calc-field">
+          <label class="pt-text">CUSTO HORA (c/ encargos)</label>
+          <label class="en-text">HOURLY COST (incl. charges)</label>
+          <input type="range" min="10" max="80" value="20" step="5" id="cost" oninput="calcUpdate()">
+          <span class="val" id="cVal">20 €</span>
+        </div>
+      </div>
+
+      <div class="calc-result">
+        <div class="metric">
+          <span class="num" id="r-week">12h</span>
+          <span class="desc pt-text">perdidas por semana</span>
+          <span class="desc en-text">lost per week</span>
+        </div>
+        <div class="metric">
+          <span class="num" id="r-year">540h</span>
+          <span class="desc pt-text">perdidas por ano</span>
+          <span class="desc en-text">lost per year</span>
+        </div>
+        <div class="metric">
+          <span class="num" id="r-cost">10 800 €</span>
+          <span class="desc pt-text">de tempo de trabalho por ano</span>
+          <span class="desc en-text">of work time per year</span>
+        </div>
+      </div>
+
+      <p class="calc-footnote pt-text">
+        Baseado em 45 semanas de trabalho por ano. O custo inclui encargos sociais: um colaborador a 1 400 € líquidos representa aproximadamente 20 €/hora para a empresa.
+      </p>
+      <p class="calc-footnote en-text">
+        Based on 45 working weeks per year. Cost includes social charges: an employee at €1,400 net represents approximately €20/hour for the business.
+      </p>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- SERVICES -->
+<section class="services-section" id="servicos">
+  <div class="wrap-wide">
+    <span class="section-label pt-text">O que faço</span>
+    <span class="section-label en-text">What I do</span>
+
+    <h2>
+      <span class="pt-text">Sistemas feitos à medida, não produtos de prateleira.</span>
+      <span class="en-text">Bespoke systems, not off-the-shelf products.</span>
+    </h2>
+
+    <div class="services-grid">
+      <div class="service-card">
+        <div class="service-icon"></div>
+        <h3><span class="pt-text">Automações de processo</span><span class="en-text">Process automations</span></h3>
+        <p class="pt-text">Elimino tarefas manuais e repetitivas — lembretes, reencaminhamentos, registos, relatórios. O sistema faz, a equipa decide.</p>
+        <p class="en-text">I eliminate manual and repetitive tasks — reminders, routing, logging, reports. The system does it, your team decides.</p>
+        <span class="examples pt-text">
+          Lembretes de consultas por email e WhatsApp<br>
+          Gestão de avaliações do Google<br>
+          Pipeline de descrições de produto com IA<br>
+          Relatórios semanais automáticos
+        </span>
+        <span class="examples en-text">
+          Appointment reminders via email and WhatsApp<br>
+          Google review management<br>
+          AI product description pipeline<br>
+          Automated weekly reports
+        </span>
+      </div>
+
+      <div class="service-card">
+        <div class="service-icon"></div>
+        <h3><span class="pt-text">Assistentes e agentes IA</span><span class="en-text">AI assistants and agents</span></h3>
+        <p class="pt-text">Bots de atendimento que respondem com base no conhecimento real da sua empresa — preços, serviços, horários — e passam para humano quando é preciso.</p>
+        <p class="en-text">Support bots that answer from your real business knowledge — prices, services, hours — and hand off to a human when needed.</p>
+        <span class="examples pt-text">
+          Bot de FAQ no WhatsApp para clínicas<br>
+          Agente de marcações com disponibilidade real<br>
+          Assistente de CRM com scoring de leads<br>
+          Memória de clientes recorrentes
+        </span>
+        <span class="examples en-text">
+          WhatsApp FAQ bot for clinics<br>
+          Booking agent with real availability<br>
+          CRM assistant with lead scoring<br>
+          Returning customer memory
+        </span>
+      </div>
+
+      <div class="service-card">
+        <div class="service-icon"></div>
+        <h3><span class="pt-text">Integrações e pipelines</span><span class="en-text">Integrations and pipelines</span></h3>
+        <p class="pt-text">Conecto os sistemas que já usa — formulários, email, CRM, Notion, WhatsApp — para que a informação flua sem intervenção manual.</p>
+        <p class="en-text">I connect the systems you already use — forms, email, CRM, Notion, WhatsApp — so information flows without manual intervention.</p>
+        <span class="examples pt-text">
+          Formulário → CRM → email automático<br>
+          HubSpot e Pipedrive com IA<br>
+          Pipelines RGPD com n8n auto-alojado<br>
+          Onboarding automático de clientes
+        </span>
+        <span class="examples en-text">
+          Form → CRM → automated email<br>
+          HubSpot and Pipedrive with AI<br>
+          GDPR pipelines with self-hosted n8n<br>
+          Automated client onboarding
+        </span>
+      </div>
+
+      <div class="service-card">
+        <div class="service-icon"></div>
+        <h3><span class="pt-text">Dashboards e relatórios</span><span class="en-text">Dashboards and reports</span></h3>
+        <p class="pt-text">Transforma os seus dados em informação visível e accionável, sem ter de abrir quatro folhas de cálculo e fazer cálculos manuais.</p>
+        <p class="en-text">Transforms your data into visible, actionable information — without opening four spreadsheets and doing manual calculations.</p>
+        <span class="examples pt-text">
+          Relatório semanal enviado por email<br>
+          Dashboard de vendas em tempo real<br>
+          Monitor de execuções e erros<br>
+          Análise de avaliações e NPS
+        </span>
+        <span class="examples en-text">
+          Weekly report sent by email<br>
+          Real-time sales dashboard<br>
+          Execution and error monitor<br>
+          Review and NPS analysis
+        </span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- HOW IT WORKS -->
+<section class="how-section" id="como">
+  <div class="wrap">
+    <span class="section-label pt-text">Como funciona</span>
+    <span class="section-label en-text">How it works</span>
+
+    <h2>
+      <span class="pt-text">Três passos. Nenhum salto no escuro.</span>
+      <span class="en-text">Three steps. No leap in the dark.</span>
+    </h2>
+
+    <div class="steps">
+      <div class="step">
+        <span class="step-num">01</span>
+        <div class="step-content">
+          <h3><span class="pt-text">Falamos</span><span class="en-text">We talk</span></h3>
+          <p class="pt-text">Trinta minutos sobre o seu negócio, não sobre o meu. Saberá, no mínimo, o que é automatizável — quer assine contrato ou não.</p>
+          <p class="en-text">Thirty minutes about your business, not mine. You'll leave knowing at minimum what can be automated — whether you sign or not.</p>
+        </div>
+      </div>
+      <div class="step">
+        <span class="step-num">02</span>
+        <div class="step-content">
+          <h3><span class="pt-text">Construo</span><span class="en-text">I build</span></h3>
+          <p class="pt-text">Em etapas validadas em conjunto, começando pelo mais simples. O primeiro resultado chega em dias, não em meses. Cada etapa paga-se antes de chamar a seguinte.</p>
+          <p class="en-text">In steps validated together, starting small. The first result arrives in days, not months. Each step pays for itself before the next one starts.</p>
+        </div>
+      </div>
+      <div class="step">
+        <span class="step-num">03</span>
+        <div class="step-content">
+          <h3><span class="pt-text">Fica consigo</span><span class="en-text">It stays with you</span></h3>
+          <p class="pt-text">O sistema fica nas suas contas, ao seu nome, documentado. A sua equipa é formada para o usar. Não fica dependente de mim.</p>
+          <p class="en-text">The system stays in your accounts, under your name, documented. Your team is trained to use it. You are never dependent on me.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- PRICING -->
+<section class="pricing-section" id="precos">
+  <div class="wrap-wide">
+    <span class="section-label pt-text">Preços</span>
+    <span class="section-label en-text">Pricing</span>
+
+    <h2>
+      <span class="pt-text">Uma escada que sobe ao seu ritmo.</span>
+      <span class="en-text">A ladder you climb at your own pace.</span>
+    </h2>
+    <p class="pricing-intro pt-text">Os preços são visíveis porque tem o direito de saber antes de perguntar. São confirmados após a primeira chamada de trinta minutos.</p>
+    <p class="pricing-intro en-text">Prices are visible because you have the right to know before asking. They are confirmed after the first thirty-minute call.</p>
+
+    <div class="pricing-grid">
+      <div class="pricing-card">
+        <span class="pricing-tag pt-text">PRIMEIRA AUTOMATIZAÇÃO</span>
+        <span class="pricing-tag en-text">FIRST AUTOMATION</span>
+        <h3><span class="pt-text">Primeira vitória</span><span class="en-text">First win</span></h3>
+        <span class="tagline pt-text">Uma automatização que elimina uma tarefa repetitiva específica.</span>
+        <span class="tagline en-text">One automation that eliminates one specific repetitive task.</span>
+        <span class="price-line">€400 – €800</span>
+        <span class="price-sub pt-text">entrega em menos de duas semanas</span>
+        <span class="price-sub en-text">delivered in under two weeks</span>
+        <ul class="pricing-list">
+          <li><span class="pt-text">Levantamento de requisitos</span><span class="en-text">Requirements scoping</span></li>
+          <li><span class="pt-text">Construção e testes</span><span class="en-text">Build and testing</span></li>
+          <li><span class="pt-text">Documentação de entrega</span><span class="en-text">Handover documentation</span></li>
+          <li><span class="pt-text">30 dias de suporte inicial</span><span class="en-text">30 days initial support</span></li>
+        </ul>
+      </div>
+
+      <div class="pricing-card featured">
+        <span class="pricing-tag pt-text">MAIS PEDIDO</span>
+        <span class="pricing-tag en-text">MOST REQUESTED</span>
+        <h3><span class="pt-text">Sistema completo</span><span class="en-text">Full system</span></h3>
+        <span class="tagline pt-text">Agente IA, integrações e pipeline de ponta a ponta.</span>
+        <span class="tagline en-text">AI agent, integrations and end-to-end pipeline.</span>
+        <span class="price-line">€1 500 – €4 000</span>
+        <span class="price-sub pt-text">entrega em 3 a 5 semanas</span>
+        <span class="price-sub en-text">delivered in 3 to 5 weeks</span>
+        <ul class="pricing-list">
+          <li><span class="pt-text">Análise do processo actual</span><span class="en-text">Current process analysis</span></li>
+          <li><span class="pt-text">Construção completa e testes</span><span class="en-text">Full build and testing</span></li>
+          <li><span class="pt-text">Formação da equipa</span><span class="en-text">Team training</span></li>
+          <li><span class="pt-text">Documentação técnica completa</span><span class="en-text">Full technical documentation</span></li>
+          <li><span class="pt-text">60 dias de suporte</span><span class="en-text">60 days support</span></li>
+        </ul>
+      </div>
+
+      <div class="pricing-card">
+        <span class="pricing-tag pt-text">MANUTENÇÃO MENSAL</span>
+        <span class="pricing-tag en-text">MONTHLY RETAINER</span>
+        <h3><span class="pt-text">Sistema vivo</span><span class="en-text">Living system</span></h3>
+        <span class="tagline pt-text">O sistema acompanha a evolução do seu negócio.</span>
+        <span class="tagline en-text">The system evolves with your business.</span>
+        <span class="price-line">€150 – €400/mês</span>
+        <span class="price-sub pt-text">a partir do segundo mês</span>
+        <span class="price-sub en-text">from the second month</span>
+        <ul class="pricing-list">
+          <li><span class="pt-text">Monitorização de execuções</span><span class="en-text">Execution monitoring</span></li>
+          <li><span class="pt-text">Correcção de erros</span><span class="en-text">Error correction</span></li>
+          <li><span class="pt-text">Actualizações de conteúdo</span><span class="en-text">Content updates</span></li>
+          <li><span class="pt-text">Relatório mensal de desempenho</span><span class="en-text">Monthly performance report</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <p class="pricing-note pt-text">
+      Estes valores são indicativos e confirmados após o primeiro contacto. Nada vincula antes do orçamento aceite. Os preços não incluem IVA.
+    </p>
+    <p class="pricing-note en-text">
+      These values are indicative and confirmed after first contact. Nothing is binding before an accepted quote. Prices exclude VAT.
+    </p>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- ABOUT -->
+<section class="about-section" id="sobre">
+  <div class="wrap-wide">
+    <span class="section-label pt-text">Sobre</span>
+    <span class="section-label en-text">About</span>
+
+    <div class="about-grid">
+      <div class="about-text">
+        <h2 style="margin-bottom:24px">
+          <span class="pt-text">Sou a Mafalda.</span>
+          <span class="en-text">I'm Mafalda.</span>
+        </h2>
+        <p class="pt-text">
+          <strong>Engenheira de processos com doutoramento</strong> e mais de dez anos de experiência na indústria automóvel e química, em Portugal, França e Suécia. Aprendi que o trabalho mais inteligente começa por eliminar o que não precisa de ser feito por humanos.
+        </p>
+        <p class="en-text">
+          <strong>Process engineer with a PhD</strong> and over ten years of experience in the automotive and chemical industry, across Portugal, France and Sweden. I learned that smarter work starts by eliminating what doesn't need to be done by humans.
+        </p>
+        <p class="pt-text">
+          A ConfIA nasceu da convicção de que a automação com IA não deve ser exclusiva das grandes empresas. Uma clínica em Lisboa ou um restaurante no Porto têm os mesmos problemas de processos repetitivos — e merecem as mesmas soluções.
+        </p>
+        <p class="en-text">
+          ConfIA was born from the conviction that AI automation shouldn't be exclusive to large companies. A clinic in Lisbon or a restaurant in Porto has the same repetitive process problems — and deserves the same solutions.
+        </p>
+        <p class="pt-text">
+          Trabalho em português, inglês e francês. Baseada entre Lyon e Lisboa.
+        </p>
+        <p class="en-text">
+          I work in Portuguese, English and French. Based between Lyon and Lisbon.
+        </p>
+      </div>
+      <div>
+        <span class="tools-label pt-text">FERRAMENTAS QUE USO</span>
+        <span class="tools-label en-text">TOOLS I USE</span>
+        <div class="tools-list">
+          Make (ex-Integromat)<br>
+          n8n · auto-alojado / self-hosted<br>
+          Claude API (Anthropic)<br>
+          WhatsApp Business API<br>
+          Google Workspace<br>
+          HubSpot · Pipedrive<br>
+          Notion · Airtable
+        </div>
+        <br><br>
+        <span class="tools-label pt-text">SECTORES</span>
+        <span class="tools-label en-text">SECTORS</span>
+        <div class="tools-list">
+          <span class="pt-text">Clínicas e consultórios<br>
+          Restauração e hotelaria<br>
+          Comércio local e retalho<br>
+          Serviços B2B e agências</span>
+          <span class="en-text">Clinics and medical practices<br>
+          Restaurants and hospitality<br>
+          Local retail and commerce<br>
+          B2B services and agencies</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA FOOTER -->
+<section class="cta-section">
+  <div class="wrap">
+    <h2>
+      <span class="pt-text">Conte-me o que está a pesar à sua equipa.</span>
+      <span class="en-text">Tell me what's weighing down your team.</span>
+    </h2>
+    <p class="pt-text">Trinta minutos, gratuitos, sem compromisso. Sai da chamada com uma ideia clara do que pode ser automatizado — quer avancemos ou não.</p>
+    <p class="en-text">Thirty minutes, free, no commitment. You'll leave the call with a clear idea of what can be automated — whether we go ahead or not.</p>
+    <div class="cta-row">
+      <a href="https://calendly.com" class="btn-primary">
+        <span class="pt-text">Marcar chamada gratuita</span>
+        <span class="en-text">Book free call</span>
+      </a>
+      <span class="cta-note">mafalda@conf-ia.pt</span>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="inner">
+    <span class="brand">conf<span>IA</span> · Mafalda Lancinha Pereira</span>
+    <div class="links">
+      <a href="https://linkedin.com/in/mafaldavlp">LinkedIn</a>
+      <span class="pt-text">Lyon · Lisboa</span>
+      <span class="en-text">Lyon · Lisbon</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+function calcUpdate() {
+  const p = +document.getElementById('people').value;
+  const h = +document.getElementById('hours').value;
+  const c = +document.getElementById('cost').value;
+  document.getElementById('pVal').textContent = p;
+  document.getElementById('hVal').textContent = h;
+  document.getElementById('cVal').textContent = c + ' €';
+  const wk = p * h;
+  const yr = wk * 45;
+  const cost = yr * c;
+  document.getElementById('r-week').textContent = wk + 'h';
+  document.getElementById('r-year').textContent = yr + 'h';
+  document.getElementById('r-cost').textContent = cost.toLocaleString('pt-PT') + ' €';
+}
+
+function toggleLang() {
+  document.body.classList.toggle('en');
+  const btn = document.querySelector('.lang-toggle');
+  btn.textContent = document.body.classList.contains('en') ? 'PT / EN' : 'EN / PT';
+}
+
+calcUpdate();
+</script>
+</body>
+</html>
